@@ -1,10 +1,16 @@
-rankhospital <- function(state, outcome) {
+rankhospital <- function(state, outcome, num = "best") {
     ## Read outcome data
     data <- read.csv("outcome-of-care-measures.csv", colClasses = "character")
 
+    ## Check that num  is valid
+    if (!(num == "best" || num == "worst" || is.numeric(num))) {
+        errmsg <- "invalid num. Valid values are 'best','worst', or an integer.\n"
+        stop(errmsg)
+    }
+    
     ## Check that outcome is valid
     if (outcome != "heart attack" && outcome != "heart failure" && outcome != "pneumonia") {
-        errmsg <- " : invalid outcome\n"
+        errmsg <- "invalid outcome\n"
         stop(errmsg)
     }
 
@@ -14,7 +20,7 @@ rankhospital <- function(state, outcome) {
     if (length(data[data[,7]==state,7])==0) {
 #      checkstate <- subset(states,stateval==state)
 #      if (nrow(checkstate) == 0) {
-        errmsg <- " : invalid state\n"
+        errmsg <- "invalid state\n"
         stop(errmsg)
     }
     
@@ -33,8 +39,28 @@ rankhospital <- function(state, outcome) {
 
     
     #Return hospital name in that state with lowest 30-day death rate
-    #That would be the first one in the ordered data.frame.
-    h[1,1]
+    if (num=="best") {
+        #return the first row
+        h[1,1]
+    }
+    else if (num=="worst"){
+        #return the last row
+        #tail(h[,1],1)
+        h[nrow(h),1]
+    }
+    else {
+        #Turn num into an integer
+        num <- as.integer(num)
+        
+        #If num is greater than size of h return NA
+        if (nrow(h) < num) {
+            return(NA)
+        }
+        else {
+            #return the row equal to num
+            h[num,1]
+        }
+    }
 }
 
 # Rprof("best.out")
