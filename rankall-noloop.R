@@ -57,10 +57,9 @@ rankall <- function(outcome, num = "best") {
                 #                 col1 = name of hospital associated with rowindex 
                 #                 col2 = name of the first state
                 data.frame(hospital=x[rowindex,"hospital"], state=x[1,"state"])
-            }
+                }
             )
-        )
-        )
+        ))
     )
 }
 
